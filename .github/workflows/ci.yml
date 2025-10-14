@@ -17,22 +17,12 @@ jobs:
           python-version: 3.11
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Initialize database with test data
+      - name: Initialize database
         run: |
           python -c "
-          from database import get_db_connection
-          conn = get_db_connection()
-          # Create tables
-          conn.execute('CREATE TABLE IF NOT EXISTS books (id INTEGER PRIMARY KEY, title TEXT, author TEXT, isbn TEXT UNIQUE, quantity INTEGER)')
-          conn.execute('CREATE TABLE IF NOT EXISTS borrow_records (id INTEGER PRIMARY KEY, patron_id TEXT, book_id INTEGER, borrow_date TEXT, return_date TEXT)')
-          
-          # Insert test data
-          conn.execute('INSERT OR IGNORE INTO books (id, title, author, isbn, quantity) VALUES (1, \"Sample Book\", \"Sample Author\", \"1234567890123\", 5)')
-          conn.execute('INSERT OR IGNORE INTO books (id, title, author, isbn, quantity) VALUES (2, \"Another Book\", \"Another Author\", \"2345678901234\", 3)')
-          conn.execute('INSERT OR IGNORE INTO books (id, title, author, isbn, quantity) VALUES (3, \"Overdue Book\", \"Overdue Author\", \"3456789012345\", 2)')
-          
-          conn.commit()
-          conn.close()
+          from database import init_database, add_sample_data
+          init_database()
+          add_sample_data()
           "
       - name: Run tests
         run: pytest
