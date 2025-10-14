@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -22,14 +23,34 @@ jobs:
 
       - name: Initialize test database
         run: |
-          import os
-          from database import get_db_connection
-          os.environ['DB_FILE'] = 'test_library.db'  # ensure CI uses separate DB
-          conn = get_db_connection()
-          conn.execute('''CREATE TABLE IF NOT EXISTS books (id INTEGER PRIMARY KEY, title TEXT, author TEXT, isbn TEXT UNIQUE, quantity INTEGER)''')
-          conn.execute('''CREATE TABLE IF NOT EXISTS borrow_records (id INTEGER PRIMARY KEY, patron_id TEXT, book_id INTEGER, borrow_date TEXT, return_date TEXT)''')
-          conn.commit()
-          conn.close()
+          python - <<EOF
+import os
+from database import get_db_connection
+
+os.environ['DB_FILE'] = 'test_library.db'
+
+conn = get_db_connection()
+conn.execute('''
+CREATE TABLE IF NOT EXISTS books (
+id INTEGER PRIMARY KEY,
+title TEXT,
+author TEXT,
+isbn TEXT UNIQUE,
+quantity INTEGER
+)
+''')
+conn.execute('''
+CREATE TABLE IF NOT EXISTS borrow_records (
+id INTEGER PRIMARY KEY,
+patron_id TEXT,
+book_id INTEGER,
+borrow_date TEXT,
+return_date TEXT
+)
+''')
+conn.commit()
+conn.close()
+EOF
 
       - name: Run tests
         env:
