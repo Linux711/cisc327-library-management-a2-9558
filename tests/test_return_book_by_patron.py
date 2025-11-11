@@ -1,5 +1,5 @@
 import pytest
-from library_service import return_book_by_patron
+from services.library_service import return_book_by_patron
 
 def test_return_book_success():
     """Test successful book return"""

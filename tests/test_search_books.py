@@ -1,5 +1,5 @@
 import pytest
-from library_service import search_books_in_catalog
+from services.library_service import search_books_in_catalog
 
 def test_search_books_empty_search_term():
     """Test search with empty search term"""

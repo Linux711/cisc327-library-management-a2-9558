@@ -10,6 +10,55 @@ from database import (
     insert_book, insert_borrow_record, update_book_availability,
     update_borrow_record_return_date, get_all_books
 )
+from services.payment_service import PaymentGateway
+
+def pay_late_fees(patron_id: str, book_id: int, payment_gateway: PaymentGateway) -> Tuple[bool, str]:
+    """
+    Process late fee payment for a book using the payment gateway.
+    Returns (success: bool, message: str)
+    """
+    # Validate patron
+    if not patron_id or not patron_id.isdigit() or len(patron_id) != 6:
+        return False, "Invalid patron ID"
+
+    # Get late fee
+    fee_info = calculate_late_fee_for_book(patron_id, book_id)
+    amount = fee_info.get("fee_amount", 0.0)
+
+    if amount <= 0:
+        return False, "No late fees to pay"
+
+    try:
+        # Here we expect the payment_gateway mock to return True/False
+        success = payment_gateway.process_payment(patron_id, amount)
+        if success:
+            return True, f"Payment successful for book {book_id}, amount: ${amount:.2f}"
+        else:
+            return False, "Payment declined"
+    except Exception as e:
+        return False, f"Payment failed: {str(e)}"
+
+
+def refund_late_fee_payment(transaction_id: str, amount: float, payment_gateway: PaymentGateway) -> Tuple[bool, str]:
+    """
+    Refund a late fee payment using the payment gateway.
+    Returns (success: bool, message: str)
+    """
+    if not transaction_id:
+        return False, "Invalid transaction ID"
+
+    if amount <= 0 or amount > 15:
+        return False, "Invalid refund amount"
+
+    try:
+        # Expect mock to return True/False
+        success = payment_gateway.refund_payment(transaction_id, amount)
+        if success:
+            return True, f"Refund successful for transaction {transaction_id}, amount: ${amount:.2f}"
+        else:
+            return False, "Refund declined"
+    except Exception as e:
+        return False, f"Refund failed: {str(e)}"
 
 def add_book_to_catalog(title: str, author: str, isbn: str, total_copies: int) -> Tuple[bool, str]:
     """

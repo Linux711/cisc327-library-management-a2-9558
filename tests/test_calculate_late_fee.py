@@ -1,5 +1,5 @@
 import pytest
-from library_service import calculate_late_fee_for_book
+from services.library_service import calculate_late_fee_for_book
 
 def test_calculate_late_fee_invalid_patron_id_empty():
     """Test late fee calculation with empty patron ID"""

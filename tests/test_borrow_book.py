@@ -1,5 +1,5 @@
 import pytest
-from library_service import borrow_book_by_patron, add_book_to_catalog
+from services.library_service import borrow_book_by_patron, add_book_to_catalog
 
 def test_borrow_success():
     """Test successful borrowing of a book"""

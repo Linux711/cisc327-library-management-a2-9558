@@ -1,9 +1,13 @@
 import pytest
-from library_service import (
+from unittest.mock import patch
+from services.library_service import (
     add_book_to_catalog
 )
 
-def test_add_book_valid_input():
+@patch("services.library_service.get_book_by_isbn", return_value=None)
+@patch("services.library_service.insert_book", return_value=True)
+
+def test_add_book_valid_input(mock_insert, mock_get):
     """Test adding a book with valid input."""
     success, message = add_book_to_catalog("Test Book", "Test Author", "1234567890123", 5)
     

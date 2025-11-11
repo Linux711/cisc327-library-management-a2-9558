@@ -1,5 +1,5 @@
 import pytest
-from library_service import get_patron_status_report
+from services.library_service import get_patron_status_report
 
 def test_patron_status_invalid_id_empty():
     """Test patron status with empty patron ID"""
