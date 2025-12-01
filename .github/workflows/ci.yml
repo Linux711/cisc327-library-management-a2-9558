@@ -26,11 +26,11 @@ jobs:
 
       - name: Initialize database
         run: |
-          python -c "
-from database import init_database, add_sample_data
-init_database()
-add_sample_data()
-"
+          python - << 'EOF'
+          from database import init_database, add_sample_data
+          init_database()
+          add_sample_data()
+          EOF
 
       - name: Start Flask server
         run: |
